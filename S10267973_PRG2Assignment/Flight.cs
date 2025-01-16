@@ -2,7 +2,8 @@
 // Student Number: S10267973, S10268020
 // Student Name	 : Eng Zhe Xuan, Gerel & Ong Jun Shu, Camellia
 //==========================================================
-namespace PRG2_ASST
+
+namespace S10267973_PRG2Assignment
 {
     abstract class Flight
     {

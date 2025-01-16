@@ -3,7 +3,7 @@
 // Student Name	 : Eng Zhe Xuan, Gerel & Ong Jun Shu, Camellia
 //==========================================================
 
-namespace PRG2_ASST
+namespace S10267973_PRG2Assignment
 {
     internal class DDJBFlight : Flight
     {
