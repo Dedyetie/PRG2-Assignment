@@ -60,7 +60,15 @@
         }
         public void PrintAirlineFees()
         {
-            Console.WriteLine($"{GetAirlineFromFlight}")
+            foreach (KeyValuePair<string, Airline> kvp in Airlines)
+            {
+                Console.WriteLine($"{kvp.Value.Name} Fee: {kvp.Value.CalculateFees()}");
+            }
+        }
+
+        public override string ToString()
+        {
+            return "";
         }
 
     }

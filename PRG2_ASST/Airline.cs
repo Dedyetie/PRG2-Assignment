@@ -48,8 +48,7 @@
         }
         public override string ToString()
         {
-            return "";
-          
+            return $"{Code, -16}{Name}";
         }
 
     }

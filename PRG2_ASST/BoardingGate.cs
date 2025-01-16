@@ -40,7 +40,7 @@
 
         public override string ToString()
         {
-            return "";
+            return $"{GateName, -15}{SupportsDDJB, -10}{SupportsCFFT, -10}{SupportsLWTT}";
         }
     }
 }
