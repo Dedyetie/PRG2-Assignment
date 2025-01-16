@@ -1,9 +1,32 @@
 ﻿using S10267973_PRG2Assignment;
 
+Terminal terminal = new Terminal("Terminal 5");
 
+//1) Load files (airlines and boarding gates)
+using (StreamReader sr = new StreamReader("airlines.csv"))
+{
+    string? s = sr.ReadLine();
 
-// Task 2: Load files (flights)
-Dictionary<string, Flight> FlightDict = new Dictionary<string, Flight>();
+    while ((s = sr.ReadLine()) != null)
+    {
+        string[] info = s.Split(",");
+        Airline airline = new Airline(info[0], info[1]);
+        terminal.AddAirline(airline);
+    }
+}
+
+using (StreamReader sr = new StreamReader("boardinggates.csv"))
+{
+    string? s = sr.ReadLine();
+
+    while ((s = sr.ReadLine()) != null)
+    {
+        string[] info = s.Split(",");
+        BoardingGate boardingGate = new BoardingGate(info[0], Convert.ToBoolean(info[1]), Convert.ToBoolean(info[2]), Convert.ToBoolean(info[3]));
+    }
+}
+
+//2) Load files (flights)
 using (StreamReader sr = new StreamReader("flights.csv"))
 {
     int counter = 0;
@@ -16,22 +39,22 @@ using (StreamReader sr = new StreamReader("flights.csv"))
         // if flight has special request LWTT
         if (spline[4] == "LWTT")
         {
-            FlightDict.Add(spline[0], new LWTTFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
+            terminal.Flights.Add(spline[0], new LWTTFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
         }
         // if flight has special request DDJB
         else if (spline[4] == "DDJB")
         {
-            FlightDict.Add(spline[0], new DDJBFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
+            terminal.Flights.Add(spline[0], new DDJBFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
         }
         // if flight has special request CFFT
         else if (spline[4] == "CFFT")
         {
-            FlightDict.Add(spline[0], new CFFTFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
+            terminal.Flights.Add(spline[0], new CFFTFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
         }
         // if it is a normal flight (no special request)
         else
         {
-            FlightDict.Add(spline[0], new NORMFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
+            terminal.Flights.Add(spline[0], new NORMFlight(spline[0], spline[1], spline[2], Convert.ToDateTime(spline[3]), "On time"));
         }
         counter++;
     }
@@ -41,11 +64,13 @@ using (StreamReader sr = new StreamReader("flights.csv"))
 // Task 3: List all the flights
 void DisplayFlight()
 {
-    Console.WriteLine("=============================================\nList of Flights for Changi Airport Terminal 5\n=============================================\n");
-    Console.WriteLine($"{"Flight Number", -16}{"Airline Name", -21}{"Origin", -21}{"Destination", -21}{"Expected Departure/Arrival Time"}");
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Flights for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-21}{"Origin",-21}{"Destination",-21}{"Expected Departure/Arrival Time"}");
     foreach (Flight flight in FlightDict.Values)
     {
-        Console.WriteLine($"{flight.FlightNumber, -16}{"aa", -21}{flight.Origin, -21}{flight.Destination, -21}{flight.ExpectedTime}");
+        Console.WriteLine($"{flight.FlightNumber,-16}{"aa",-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime}");
     }
 }
 DisplayFlight();
