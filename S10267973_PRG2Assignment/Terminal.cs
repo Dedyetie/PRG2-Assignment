@@ -60,7 +60,7 @@
         }
         public void PrintAirlineFees()
         {
-            Console.WriteLine($"{GetAirlineFromFlight}")
+            Console.WriteLine($"{GetAirlineFromFlight}");
         }
 
     }
