@@ -1,8 +1,6 @@
 ﻿//==========================================================
-// Student Number: S10267973
-// Student Name	 : Eng Zhe Xuan, Gerel
-// Student Number: S10268020
-// Partner Name	 : Ong Jun Shu Camellia
+// Student Number: S10267973, S10268020
+// Student Name	 : Eng Zhe Xuan, Gerel & Ong Jun Shu, Camellia
 //==========================================================
 
 namespace PRG2_ASST

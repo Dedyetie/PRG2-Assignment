@@ -1,4 +1,9 @@
-﻿namespace PRG2_ASST
+﻿//==========================================================
+// Student Number: S10267973, S10268020
+// Student Name	 : Eng Zhe Xuan, Gerel & Ong Jun Shu, Camellia
+//==========================================================
+
+namespace PRG2_ASST
 {
     class Terminal
     {
@@ -60,7 +65,15 @@
         }
         public void PrintAirlineFees()
         {
-            Console.WriteLine($"{GetAirlineFromFlight}");
+            foreach (KeyValuePair<string, Airline> kvp in Airlines)
+            {
+                Console.WriteLine($"{kvp.Value.Name} Fee: {kvp.Value.CalculateFees()}");
+            }
+        }
+
+        public override string ToString()
+        {
+            return "";
         }
 
     }
