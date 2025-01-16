@@ -1,4 +1,10 @@
-﻿namespace PRG2_ASST
+﻿//==========================================================
+// Student Number: S10267973
+// Student Name	 : Eng Zhe Xuan, Gerel
+// Partner Name	 : Ong Jun Shu Camellia
+//==========================================================
+
+namespace PRG2_ASST
 {
     class CFFTFlight : Flight
     {
