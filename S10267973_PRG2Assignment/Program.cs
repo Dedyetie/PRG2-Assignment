@@ -17,7 +17,7 @@ using (StreamReader sr = new StreamReader("airlines.csv"))
         terminal.AddAirline(airline);
         counter++;
     }
-    Console.WriteLine(counter + " Airlines Loaded!");
+    Console.WriteLine($"{counter} Airlines Loaded!");
 }
 
 using (StreamReader sr = new StreamReader("boardinggates.csv"))
@@ -32,8 +32,9 @@ using (StreamReader sr = new StreamReader("boardinggates.csv"))
         string[] info = s.Split(",");
         BoardingGate boardingGate = new BoardingGate(info[0], Convert.ToBoolean(info[1]), Convert.ToBoolean(info[2]), Convert.ToBoolean(info[3]));
         terminal.AddBoardingGate(boardingGate);
+        counter++;
     }
-    Console.WriteLine(counter + " Boarding Gates Loaded");
+    Console.WriteLine($"{counter} Boarding Gates Loaded!");
 }
 
 
@@ -73,6 +74,85 @@ using (StreamReader sr = new StreamReader("flights.csv"))
     Console.WriteLine($"{counter} Flights Loaded!");
 }
 
+Console.WriteLine("");
+Console.WriteLine("");
+
+// Main Program
+while (true)
+{
+    int opt = Menu();
+
+    if (opt == 0)
+    {
+        Console.WriteLine("Goodbye!");
+        break;
+    }
+    else if (opt == 1)
+    {
+        DisplayFlight();
+        Console.WriteLine("");
+    }
+
+    else if (opt == 2)
+    {
+
+    }
+    else if (opt == 3)
+    {
+        BoardGateAssignment();
+        Console.WriteLine("");
+    }
+    else if (opt == 4)
+    {
+        CreateFlight();
+        Console.WriteLine("");
+    }
+    else if (opt == 5)
+    {
+    }
+    else if (opt == 6)
+    {
+    }
+    else if (opt == 7)
+    {
+
+    }
+    else
+    {
+        Console.WriteLine("Invalid option! Please try again.");
+        Console.WriteLine("");
+    }
+}
+
+
+// Menu 
+int Menu()
+{
+    int opt;
+    try
+    {
+        Console.WriteLine("=============================================");
+        Console.WriteLine("Welcome to Changi Airport Terminal 5");
+        Console.WriteLine("=============================================");
+        Console.WriteLine("1. List All Flights");
+        Console.WriteLine("2. List Boarding Gates");
+        Console.WriteLine("3. Assign a Boarding Gate to a Flight");
+        Console.WriteLine("4. Create Flight");
+        Console.WriteLine("5. Display Airline Flights");
+        Console.WriteLine("6. Modify Flight Details");
+        Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("0. Exit");
+        Console.WriteLine("");
+        Console.WriteLine("Please select your option:");
+        opt = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("");
+    }
+    catch (FormatException)
+    {
+        opt = -1;
+    }
+    return opt;
+}
 
 // 3) List all flights with basic information
 void DisplayFlight() //option 1
