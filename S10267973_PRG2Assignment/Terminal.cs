@@ -50,14 +50,11 @@ namespace S10267973_PRG2Assignment
         }
         public Airline GetAirlineFromFlight(Flight f)
         {
-            foreach (KeyValuePair<string, Airline> kvp in Airlines)
+            foreach (Airline airline in Airlines.Values)
             {
-                foreach (KeyValuePair<string, Flight> kvp2 in kvp.Value.Flights)
+                if (f.FlightNumber.Contains(airline.Code) == true)
                 {
-                    if (kvp2.Value.FlightNumber == f.FlightNumber)
-                    {
-                        return kvp.Value;
-                    }
+                    return airline;
                 }
             }
 

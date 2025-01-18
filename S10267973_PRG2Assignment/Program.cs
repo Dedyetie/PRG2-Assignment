@@ -71,6 +71,13 @@ using (StreamReader sr = new StreamReader("flights.csv"))
         }
         counter++;
     }
+
+    foreach (Flight flight in terminal.Flights.Values)
+    {
+        Airline airline = terminal.GetAirlineFromFlight(flight);
+        airline.AddFlight(flight);
+    }
+
     Console.WriteLine($"{counter} Flights Loaded!");
 }
 
@@ -95,7 +102,8 @@ while (true)
 
     else if (opt == 2)
     {
-
+        ListBoardingGates();
+        Console.WriteLine("");
     }
     else if (opt == 3)
     {
@@ -109,6 +117,8 @@ while (true)
     }
     else if (opt == 5)
     {
+        DisplayAirlineFlights();
+        Console.WriteLine("");
     }
     else if (opt == 6)
     {
@@ -154,22 +164,45 @@ int Menu()
     return opt;
 }
 
-// 3) List all flights with basic information
-void DisplayFlight() //option 1
+
+// 3) List all flights with basic information (option 1)
+void DisplayFlight()
 {
     Console.WriteLine("=============================================");
     Console.WriteLine("List of Flights for Changi Airport Terminal 5");
     Console.WriteLine("=============================================");
+
     Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-21}{"Origin",-21}{"Destination",-21}{"Expected Departure/Arrival Time"}");
     foreach (Flight flight in terminal.Flights.Values)
     {
-        Console.WriteLine($"{flight.FlightNumber,-16}{"aa",-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime}");
+        foreach (Airline airline in terminal.Airlines.Values)
+        {
+            if (airline.Flights.ContainsKey(flight.FlightNumber) == true)
+            {
+                Console.WriteLine($"{flight.FlightNumber,-16}{airline.Name,-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime}");
+            }
+        }
     }
 }
 
 
-// 5) Assign a boarding gate to a flight
-void BoardGateAssignment() //option 3
+// 4) List all boarding gates (option 2)
+void ListBoardingGates()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Boarding Gates for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine($"{"Gate Name",-15}{"DDJB",-20}{"CFFT",-20}{"LWTT"}");
+    foreach (BoardingGate boardingGate in terminal.BoardingGates.Values)
+    {
+        Console.WriteLine($"{boardingGate.GateName,-15}{boardingGate.SupportsDDJB,-20}{boardingGate.SupportsCFFT,-20}{boardingGate.SupportsLWTT}");
+    }
+}
+
+
+// 5) Assign a boarding gate to a flight (option 3)
+void BoardGateAssignment()
 {
     string flightNumber = "";
     string boardingGateNumber = "";
@@ -182,6 +215,7 @@ void BoardGateAssignment() //option 3
             Console.WriteLine("=============================================");
             Console.WriteLine("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
+
             bool flightNumberFound = false;
             foreach (Flight flight in terminal.Flights.Values)
             {
@@ -219,6 +253,7 @@ void BoardGateAssignment() //option 3
                     break;
                 }
             }
+
             Console.WriteLine("Enter Boarding Gate Name: ");
             boardingGateNumber = Console.ReadLine().ToUpper();
             if (flightNumberFound)
@@ -242,6 +277,7 @@ void BoardGateAssignment() //option 3
         {
             Console.WriteLine("Would you like to update the status of the flight? (Y/N)");
             string update = Console.ReadLine().ToLower();
+
             if (update == "y")
             {
                 Console.WriteLine("1. Delayed \n2. Boarding\n3. On Time");
@@ -283,8 +319,8 @@ void BoardGateAssignment() //option 3
 }
 
 
-// 6) Create a new flight
-void CreateFlight() //option 4
+// 6) Create a new flight (option 4)
+void CreateFlight()
 {
     string flightNumber = "";
     string origin = "";
@@ -314,7 +350,7 @@ void CreateFlight() //option 4
                 if (requestCode == "CFFT")
                 {
                     terminal.Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
-                    
+
                 }
                 else if (requestCode == "DDJB")
                 {
@@ -361,6 +397,60 @@ void CreateFlight() //option 4
         catch (Exception ex)
         {
             Console.WriteLine("Invalid input. Please try again.");
+        }
+    }
+}
+
+// 7) Display full flight details from an airline (option 5)
+void DisplayAirlineFlights()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine($"{"Airline Code",-15}{"Airline Name"}");
+    foreach (Airline airline in terminal.Airlines.Values)
+    {
+        Console.WriteLine($"{airline.Code,-15}{airline.Name}");
+    }
+
+    string code;
+    while (true)
+    {
+        try
+        {
+            Console.Write("Enter Airline Code: ");
+            code = Console.ReadLine().ToUpper();
+            if (terminal.Airlines.ContainsKey(code) == true)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please try again.");
+                continue;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Invalid input. Please try again.");
+            continue;
+        }
+    }
+
+    foreach (KeyValuePair<string, Airline> kvp in terminal.Airlines)
+    {
+        if (code == kvp.Key)
+        {
+            Console.WriteLine("=============================================");
+            Console.WriteLine($"List of Flights for {kvp.Value.Name}");
+            Console.WriteLine("=============================================");
+
+            Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-20}{"Origin",-20}{"Destination",-20}{"Expected Departure/Arrival Time"}");
+            foreach (Flight flight in kvp.Value.Flights.Values)
+            {
+                Console.WriteLine($"{flight.FlightNumber,-16}{kvp.Value.Name,-20}{flight.Origin,-20}{flight.Destination,-20}{flight.ExpectedTime}");
+            }
         }
     }
 }
