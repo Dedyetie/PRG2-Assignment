@@ -206,57 +206,16 @@ void BoardGateAssignment()
 {
     string flightNumber = "";
     string boardingGateNumber = "";
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Assign a Boarding Gate to a Flight");
+    Console.WriteLine("=============================================");
     try
     {
         while (true)
         {
-            Console.WriteLine("=============================================");
-            Console.WriteLine("Assign a Boarding Gate to a Flight");
-            Console.WriteLine("=============================================");
             Console.WriteLine("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
-
-            bool flightNumberFound = false;
-            foreach (Flight flight in terminal.Flights.Values)
-            {
-                if ((flightNumber == flight.FlightNumber) && (terminal.BoardingGates.ContainsKey(boardingGateNumber)))
-                {
-                    //Checks if the flight number has any special request
-                    string specialRequest = "";
-                    if (terminal.Flights[flightNumber] is NORMFlight)
-                    {
-                        specialRequest = "None";
-                    }
-                    else if (terminal.Flights[flightNumber] is DDJBFlight)
-                    {
-                        specialRequest = "DDJB";
-                    }
-                    else if (terminal.Flights[flightNumber] is CFFTFlight)
-                    {
-                        specialRequest = "CFFT";
-                    }
-                    else
-                    {
-                        specialRequest = "LWTT";
-                    }
-
-                    // Displays the information of the flight number
-                    Console.WriteLine("Flight Number: " + flight.FlightNumber);
-                    Console.WriteLine("Origin: " + flight.Origin);
-                    Console.WriteLine("Destination: " + flight.Destination);
-                    Console.WriteLine("Expected Time: " + flight.ExpectedTime);
-                    Console.WriteLine("Special Request Code: " + specialRequest);
-                    Console.WriteLine("Supports DDJB: " + terminal.BoardingGates[boardingGateNumber].SupportsDDJB);
-                    Console.WriteLine("Supports CFFT: " + terminal.BoardingGates[boardingGateNumber].SupportsCFFT);
-                    Console.WriteLine("Supports LWTT: " + terminal.BoardingGates[boardingGateNumber].SupportsLWTT);
-                    flightNumberFound = true;
-                    break;
-                }
-            }
-
-            Console.WriteLine("Enter Boarding Gate Name: ");
-            boardingGateNumber = Console.ReadLine().ToUpper();
-            if (flightNumberFound)
+            if (terminal.Flights.ContainsKey(flightNumber))
             {
                 break;
             }
@@ -266,10 +225,64 @@ void BoardGateAssignment()
             }
         }
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
         Console.WriteLine("Invalid input or flight details. Please try again.");
     }
+
+    try
+    {
+        while (true)
+        {
+            Console.WriteLine("Enter Boarding Gate Name: ");
+            boardingGateNumber = Console.ReadLine().ToUpper();
+            if (terminal.BoardingGates.ContainsKey(boardingGateNumber))
+            {
+                break;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Invalid input or gate details. Please try again.");
+    }
+
+
+    //Checks if the flight number has any special request
+    string specialRequest = "";
+    if (terminal.Flights[flightNumber] is NORMFlight)
+    {
+        specialRequest = "None";
+    }
+    else if (terminal.Flights[flightNumber] is DDJBFlight)
+    {
+        specialRequest = "DDJB";
+    }
+    else if (terminal.Flights[flightNumber] is CFFTFlight)
+    {
+        specialRequest = "CFFT";
+    }
+    else
+    {
+        specialRequest = "LWTT";
+    }
+
+    // assigns the flight number to the boarding gate
+    terminal.BoardingGates[boardingGateNumber].Flight = terminal.Flights[flightNumber];
+
+    // Displays the information of the flight number
+    Console.WriteLine("Flight Number: " + flightNumber);
+    Console.WriteLine("Origin: " + terminal.Flights[flightNumber].Origin);
+    Console.WriteLine("Destination: " + terminal.Flights[flightNumber].Destination);
+    Console.WriteLine("Expected Time: " + terminal.Flights[flightNumber].ExpectedTime);
+    Console.WriteLine("Special Request Code: " + specialRequest);
+    Console.WriteLine("Supports DDJB: " + terminal.BoardingGates[boardingGateNumber].SupportsDDJB);
+    Console.WriteLine("Supports CFFT: " + terminal.BoardingGates[boardingGateNumber].SupportsCFFT);
+    Console.WriteLine("Supports LWTT: " + terminal.BoardingGates[boardingGateNumber].SupportsLWTT);
 
     try
     {
@@ -296,6 +309,10 @@ void BoardGateAssignment()
                 else if (integer == "3")
                 {
                     terminal.Flights[flightNumber].Status = "Delayed";
+                }
+                else
+                {
+                    throw new Exception();
                 }
 
                 Console.WriteLine($"Boarding gate successfully assigned to gate {boardingGateNumber}!");
