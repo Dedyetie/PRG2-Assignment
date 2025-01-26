@@ -122,6 +122,8 @@ while (true)
     }
     else if (opt == 6)
     {
+        ModifyFlightDetails();
+        Console.WriteLine("");
     }
     else if (opt == 7)
     {
