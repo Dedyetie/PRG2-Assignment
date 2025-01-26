@@ -5,7 +5,7 @@
 
 namespace S10267973_PRG2Assignment
 {
-    abstract class Flight
+    abstract class Flight : IComparable<Flight>
     {
         public string FlightNumber { get; set; }
         public string Origin { get; set; }
@@ -25,5 +25,7 @@ namespace S10267973_PRG2Assignment
         {
             return "FlightNumber" + FlightNumber + "Origin" + Origin + "Destination" + Destination + "ExpectedTime" + ExpectedTime + "Status" + Status;
         }
+        public int CompareTo(Flight other)
+        { return ExpectedTime.CompareTo(other.ExpectedTime); }
     }
 }

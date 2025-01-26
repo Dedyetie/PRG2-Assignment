@@ -125,7 +125,8 @@ while (true)
     }
     else if (opt == 7)
     {
-
+        DisplayFlightSchedule();
+        Console.WriteLine("");
     }
     else
     {
@@ -209,9 +210,11 @@ void BoardGateAssignment()
     Console.WriteLine("=============================================");
     Console.WriteLine("Assign a Boarding Gate to a Flight");
     Console.WriteLine("=============================================");
-    try
+
+    // Collects flight flight number and boarding gate number
+    while (true)
     {
-        while (true)
+        try
         {
             Console.WriteLine("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
@@ -224,15 +227,15 @@ void BoardGateAssignment()
                 throw new Exception();
             }
         }
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine("Invalid input or flight details. Please try again.");
+        catch (Exception e)
+        {
+            Console.WriteLine("Invalid input or flight details. Please try again.");
+        }
     }
 
-    try
+    while (true)
     {
-        while (true)
+        try
         {
             Console.WriteLine("Enter Boarding Gate Name: ");
             boardingGateNumber = Console.ReadLine().ToUpper();
@@ -245,10 +248,10 @@ void BoardGateAssignment()
                 throw new Exception();
             }
         }
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine("Invalid input or gate details. Please try again.");
+        catch (Exception e)
+        {
+            Console.WriteLine("Invalid input or gate details. Please try again.");
+        }
     }
 
 
@@ -284,9 +287,9 @@ void BoardGateAssignment()
     Console.WriteLine("Supports CFFT: " + terminal.BoardingGates[boardingGateNumber].SupportsCFFT);
     Console.WriteLine("Supports LWTT: " + terminal.BoardingGates[boardingGateNumber].SupportsLWTT);
 
-    try
+    while (true)
     {
-        while (true)
+        try
         {
             Console.WriteLine("Would you like to update the status of the flight? (Y/N)");
             string update = Console.ReadLine().ToLower();
@@ -308,7 +311,7 @@ void BoardGateAssignment()
                 }
                 else if (integer == "3")
                 {
-                    terminal.Flights[flightNumber].Status = "Delayed";
+                    terminal.Flights[flightNumber].Status = "On Time";
                 }
                 else
                 {
@@ -328,10 +331,10 @@ void BoardGateAssignment()
                 throw new Exception();
             }
         }
-    }
-    catch
-    {
-        Console.WriteLine("Invalid input. Please try again.");
+        catch
+        {
+            Console.WriteLine("Invalid input. Please try again.");
+        }
     }
 }
 
@@ -418,6 +421,7 @@ void CreateFlight()
     }
 }
 
+
 // 7) Display full flight details from an airline (option 5)
 void DisplayAirlineFlights()
 {
@@ -467,6 +471,39 @@ void DisplayAirlineFlights()
             foreach (Flight flight in kvp.Value.Flights.Values)
             {
                 Console.WriteLine($"{flight.FlightNumber,-16}{kvp.Value.Name,-20}{flight.Origin,-20}{flight.Destination,-20}{flight.ExpectedTime}");
+            }
+        }
+    }
+}
+
+
+// 9) Display scheduled flights in chronological order, with boarding gates assignments where applicable (option 7)
+void DisplayFlightSchedule()
+{
+    List<Flight> flightList = new List<Flight>();
+    // adds all flights to a list to sort them out
+    foreach (KeyValuePair<string, Flight> kvp in terminal.Flights)
+    {
+        flightList.Add(kvp.Value);
+    }
+    flightList.Sort();
+
+    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-21}{"Origin",-21}{"Destination",-21}{"Expected Departure/Arrival Time",-34}{"Status",-11}{"Boarding Gate"}");
+    foreach (Flight flight in flightList)
+    {
+        string boardingGate = "Unassigned";
+        foreach (BoardingGate Gate in terminal.BoardingGates.Values)
+        {
+            if ((Gate.Flight != null) && (Gate.Flight.FlightNumber == flight.FlightNumber))
+            {
+                boardingGate = Gate.GateName;
+            }
+        }
+        foreach (Airline airline in terminal.Airlines.Values)
+        {
+            if (airline.Flights.ContainsKey(flight.FlightNumber) == true)
+            {
+                Console.WriteLine($"{flight.FlightNumber,-16}{airline.Name,-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime,-34}{flight.Status,-11}{boardingGate}");
             }
         }
     }
