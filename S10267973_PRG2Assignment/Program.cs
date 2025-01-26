@@ -459,6 +459,332 @@ void DisplayAirlineFlights()
 }
 
 
+// 8) Modify flight details (option 6)
+void ModifyFlightDetails()
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("List of Airlines for Changi Airport Terminal 5");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine($"{"Airline Code",-15}{"Airline Name"}");
+    foreach (Airline airline in terminal.Airlines.Values)
+    {
+        Console.WriteLine($"{airline.Code,-15}{airline.Name}");
+    }
+
+    string code;
+    Airline airline1;
+    while (true)
+    {
+        try
+        {
+            Console.WriteLine("Enter Airline Code: ");
+            code = Console.ReadLine().ToUpper();
+            if (terminal.Airlines.ContainsKey(code) == true)
+            {
+                airline1 = terminal.Airlines[code];
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please try again.");
+                continue;
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Invalid input. Please try again.");
+            continue;
+        }
+    }
+
+    Console.WriteLine("");
+    Console.WriteLine($"List of Flights for {airline1.Name}");
+    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-20}{"Origin",-20}{"Destination",-20}{"Expected Departure/Arrival Time"}");
+    foreach (Flight flight in airline1.Flights.Values)
+    {
+        Console.WriteLine($"{flight.FlightNumber,-16}{airline1.Name,-20}{flight.Origin,-20}{flight.Destination,-20}{flight.ExpectedTime}");
+    }
+
+    string fNo;
+    Flight flight1;
+    while (true)
+    {
+        try
+        {
+            Console.WriteLine("Choose an existing Flight to modify or delete:");
+            fNo = Console.ReadLine().ToUpper();
+
+            if (airline1.Flights.ContainsKey(fNo) == true)
+            {
+                flight1 = airline1.Flights[fNo];
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please try again.");
+                continue;
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Invalid input. Please try again.");
+            continue;
+        }
+    }
+
+    Console.WriteLine("");
+    Console.WriteLine("1. Modify Flight");
+    Console.WriteLine("2. Delete Flight");
+    int opt;
+
+    while (true)
+    {
+        try
+        {
+            Console.WriteLine("Choose an option:");
+            opt = Convert.ToInt32(Console.ReadLine());
+
+            if (opt == 1 || opt == 2)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please try again.");
+                continue;
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Invalid input. Please try again.");
+            continue;
+        }
+    }
+
+    if (opt == 1)
+    {
+        Console.WriteLine("");
+        Console.WriteLine("1. Modify Basic Information");
+        Console.WriteLine("2. Modify Status");
+        Console.WriteLine("3. Modify Special Request Code");
+        Console.WriteLine("4. Modify Boarding Gate");
+        int opt2;
+
+        while (true)
+        {
+            try
+            {
+                Console.WriteLine("Choose an option:");
+                opt2 = Convert.ToInt32(Console.ReadLine());
+
+                if (1 >= opt2 || 4 >= opt2)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                    continue;
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid input. Please try again.");
+                continue;
+            }
+        }
+
+        string newStatus;
+        string newOrigin;
+        string newBoardingGate;
+        if (opt2 == 1)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter new Origin: ");
+                    newOrigin = Console.ReadLine();
+                    flight1.Origin = newOrigin;
+
+                    Console.Write("Enter new Destination: ");
+                    string newDest = Console.ReadLine();
+                    flight1.Destination = newDest;
+
+                    Console.Write("Enter new Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
+                    string newExpected = Console.ReadLine();
+                    flight1.ExpectedTime = Convert.ToDateTime(newExpected);
+
+                    Console.WriteLine("Flight updated!");
+                    break;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                    continue;
+                }
+            }
+        }
+        else if (opt2 == 2)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter new Status:");
+                    newStatus = Console.ReadLine();
+                    flight1.Status = newStatus;
+
+                    Console.WriteLine("Flight updated!");
+                    break;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                    continue;
+                }
+            }
+        }
+        else if (opt2 == 3)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter new Special Request Code: ");
+                    string newSpecialRequestCode = Console.ReadLine().ToUpper();
+
+                    if (newSpecialRequestCode == "LWTT")
+                    {
+                        terminal.Flights.Remove(flight1.FlightNumber);
+                        terminal.Flights.Add(flight1.FlightNumber, new LWTTFlight(flight1.FlightNumber, flight1.Origin, flight1.Destination, flight1.ExpectedTime, flight1.Status));
+                        Console.WriteLine("Flight updated!");
+                        break;
+                    }
+                    else if (newSpecialRequestCode == "CFFT")
+                    {
+                        terminal.Flights.Remove(flight1.FlightNumber);
+                        terminal.Flights.Add(flight1.FlightNumber, new CFFTFlight(flight1.FlightNumber, flight1.Origin, flight1.Destination, flight1.ExpectedTime, flight1.Status));
+                        Console.WriteLine("Flight updated!");
+                        break;
+                    }
+                    else if (newSpecialRequestCode == "DDJB")
+                    {
+                        terminal.Flights.Remove(flight1.FlightNumber);
+                        terminal.Flights.Add(flight1.FlightNumber, new DDJBFlight(flight1.FlightNumber, flight1.Origin, flight1.Destination, flight1.ExpectedTime, flight1.Status));
+                        Console.WriteLine("Flight updated!");
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please try again.");
+                        continue;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                    continue;
+                }
+            }
+        }
+        else if (opt2 == 4)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter new Boarding Gate: ");
+                    newBoardingGate = Console.ReadLine();
+                    foreach (BoardingGate gate in terminal.BoardingGates.Values)
+                    {
+                        if (gate.Flight == flight1)
+                        {
+                            gate.Flight = null;
+                            break;
+                        }
+                    }
+                    foreach (BoardingGate boardingGate1 in terminal.BoardingGates.Values)
+                    {
+                        if (boardingGate1.GateName == newBoardingGate)
+                        {
+                            boardingGate1.Flight = flight1;
+                            break;
+                        }
+                    }
+
+                    Console.WriteLine("Flight updated!");
+                    break;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                    continue;
+                }
+
+            }
+        }
+
+        Console.WriteLine("");
+        Console.WriteLine($"Flight Number: {fNo}");
+        Console.WriteLine($"Airline Name: {airline1.Name}");
+        Console.WriteLine($"Origin: {flight1.Origin}");
+        Console.WriteLine($"Destination: {flight1.Destination}");
+        Console.WriteLine($"Expected Departure/Arrival Time: {flight1.ExpectedTime}");
+        Console.WriteLine($"Status: {flight1.Status}");
+
+        if (Convert.ToString(flight1.GetType()) == "prg2_asst.CFFTFlight")
+        {
+            Console.WriteLine($"Special Request Code: CFFT");
+        }
+        else if (Convert.ToString(flight1.GetType()) == "prg2_asst.DDJBFlight")
+        {
+            Console.WriteLine($"Special Request Code: DDJB");
+        }
+        else if (Convert.ToString(flight1.GetType()) == "prg2_asst.LWTTFlight")
+        {
+            Console.WriteLine($"Special Request Code: LWTT");
+        }
+        else
+        {
+            Console.WriteLine($"Special Request Code: NORM");
+        }
+
+        //bool foundboardingGate = false;
+        //foreach (BoardingGate boardingGate in terminal.BoardingGates.Values)
+        //{
+        //    if (boardingGate.Flight.FlightNumber == fNo)
+        //    {
+        //        foundboardingGate = true;
+        //        Console.WriteLine($"Boarding Gate: {boardingGate.GateName}");
+        //        break;
+        //    }
+        //}
+        //if (foundboardingGate = false)
+        //{
+        //    Console.WriteLine($"Boarding Gate: Unassigned");
+        //}
+
+
+        string boardingGate = "Unassigned";
+        foreach (BoardingGate Gate in terminal.BoardingGates.Values)
+        {
+            if ((Gate.Flight != null) && (Gate.Flight.FlightNumber == fNo))
+            {
+                boardingGate = Gate.GateName;
+            }
+        }
+        Console.WriteLine($"Boarding Gate: {boardingGate}");
+    }
+
+    else if (opt == 2)
+    {
+        terminal.Flights.Remove(fNo);
+    }
+}
+
+
 // 9) Display scheduled flights in chronological order, with boarding gates assignments where applicable (option 7)
 void DisplayFlightSchedule()
 {
