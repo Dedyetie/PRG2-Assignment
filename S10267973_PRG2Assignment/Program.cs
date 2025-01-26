@@ -346,7 +346,6 @@ void CreateFlight()
     string origin = "";
     string destination = "";
     DateTime expectedTime = DateTime.Now;
-    List<string> flightsAdded = new List<string>();
 
     while (true)
     {
@@ -361,58 +360,41 @@ void CreateFlight()
             Console.WriteLine("Enter Flight Expected Departure/Arrival Time: ");
             expectedTime = Convert.ToDateTime(Console.ReadLine());
 
-            Console.WriteLine("Would You Like To Enter Any Additional Information? (Y/N)");
-            string option = Console.ReadLine().ToLower();
-            if (option == "y")
+            Console.WriteLine("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
+            string requestCode = Console.ReadLine().ToUpper();
+            if (requestCode == "CFFT")
             {
-                Console.WriteLine("Enter Special Request Code: ");
-                string requestCode = Console.ReadLine();
-                if (requestCode == "CFFT")
-                {
-                    terminal.Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
 
-                }
-                else if (requestCode == "DDJB")
-                {
-                    terminal.Flights.Add(flightNumber, new DDJBFlight(flightNumber, origin, destination, expectedTime, "On time"));
-                }
-                else if (requestCode == "LWTT")
-                {
-                    terminal.Flights.Add(flightNumber, new LWTTFlight(flightNumber, origin, destination, expectedTime, "On time"));
-                }
-                else
-                {
-                    throw new Exception();
-                }
             }
-            else if (option == "n")
+            else if (requestCode == "DDJB")
             {
-                terminal.Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Flights.Add(flightNumber, new DDJBFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
-            else
+            else if (requestCode == "LWTT")
             {
-                throw new Exception();
+                terminal.Flights.Add(flightNumber, new LWTTFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
-            flightsAdded.Add(flightNumber);
+            else if (requestCode == "NONE")
+            {
+            terminal.Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
+            }
+            Console.WriteLine($"Flight {flightNumber} has been added!");
 
             Console.WriteLine("Would You Like To Add Another Flight? (Y/N)");
-            option = Console.ReadLine().ToLower();
+            string option = Console.ReadLine().ToLower();
             if (option == "y")
             {
                 continue;
             }
             else if (option == "n")
-            { }
+            {
+                break;
+            }
             else
             {
                 throw new Exception();
             }
-            Console.WriteLine("The Following Flights: ");
-            foreach (string flight in flightsAdded)
-            {
-                Console.WriteLine(flight);
-            }
-            Console.WriteLine("Have Been Successfully Added!");
         }
         catch (Exception ex)
         {
