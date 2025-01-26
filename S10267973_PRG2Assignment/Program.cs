@@ -470,10 +470,12 @@ void DisplayFlightSchedule()
     }
     flightList.Sort();
 
-    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-21}{"Origin",-21}{"Destination",-21}{"Expected Departure/Arrival Time",-34}{"Status",-11}{"Boarding Gate"}");
+    Console.WriteLine($"{"Flight Number",-16}{"Airline Name",-21}{"Origin",-21}{"Destination",-21}{"Expected Departure/Arrival Time",-34}{"Status",-11}{"Special Request Code", -23}{"Boarding Gate"}");
     foreach (Flight flight in flightList)
     {
         string boardingGate = "Unassigned";
+        string specialRequest = "None";
+        
         foreach (BoardingGate Gate in terminal.BoardingGates.Values)
         {
             if ((Gate.Flight != null) && (Gate.Flight.FlightNumber == flight.FlightNumber))
@@ -481,11 +483,25 @@ void DisplayFlightSchedule()
                 boardingGate = Gate.GateName;
             }
         }
+
+        if (flight is CFFTFlight)
+        {
+            specialRequest = "CFFT";
+        }
+        else if (flight is DDJBFlight)
+        {
+            specialRequest = "DDJB";
+        }
+        else if (flight is LWTTFlight)
+        {
+            specialRequest = "LWTT";
+        }
+
         foreach (Airline airline in terminal.Airlines.Values)
         {
             if (airline.Flights.ContainsKey(flight.FlightNumber) == true)
             {
-                Console.WriteLine($"{flight.FlightNumber,-16}{airline.Name,-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime,-34}{flight.Status,-11}{boardingGate}");
+                Console.WriteLine($"{flight.FlightNumber,-16}{airline.Name,-21}{flight.Origin,-21}{flight.Destination,-21}{flight.ExpectedTime,-34}{flight.Status,-11}{specialRequest, -23}{boardingGate}");
             }
         }
     }

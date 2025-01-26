@@ -70,7 +70,7 @@ namespace S10267973_PRG2Assignment
 
         public override string ToString()
         {
-            return "";
+            return "TerminalName" + TerminalName + "Airlines" + Airlines + "Flights" + Flights + "BoardingGates" + BoardingGates + "GateFees" + GateFees;
         }
 
     }

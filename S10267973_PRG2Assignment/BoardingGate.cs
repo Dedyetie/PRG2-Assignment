@@ -44,7 +44,9 @@ namespace S10267973_PRG2Assignment
 
         public override string ToString()
         {
-            return $"{GateName, -15}{SupportsDDJB, -10}{SupportsCFFT, -10}{SupportsLWTT}";
+            return "GateName" + GateName + "SupportsCFFT" + SupportsCFFT + "SupportsDDJB" + SupportsDDJB + "SupportsLWTT" + SupportsLWTT;
         }
     }
 }
+
+            //return $"{GateName, -15}{SupportsDDJB, -10}{SupportsCFFT, -10}{SupportsLWTT}";

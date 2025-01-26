@@ -53,8 +53,10 @@ namespace S10267973_PRG2Assignment
         }
         public override string ToString()
         {
-            return $"{Code, -16}{Name}";
+            return "Name" + Name + "Code" + Code + "Flights" + Flights;
         }
 
     }
 }
+
+            //return $"{Code, -16}{Name}";
