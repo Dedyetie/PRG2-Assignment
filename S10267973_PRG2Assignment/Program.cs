@@ -31,7 +31,7 @@ using (StreamReader sr = new StreamReader("boardinggates.csv"))
     while ((s = sr.ReadLine()) != null)
     {
         string[] info = s.Split(",");
-        BoardingGate boardingGate = new BoardingGate(info[0], Convert.ToBoolean(info[1]), Convert.ToBoolean(info[2]), Convert.ToBoolean(info[3]));
+        BoardingGate boardingGate = new BoardingGate(info[0], Convert.ToBoolean(info[2]), Convert.ToBoolean(info[1]), Convert.ToBoolean(info[3]));
         terminal.AddBoardingGate(boardingGate);
         counter++;
     }
@@ -776,37 +776,41 @@ void ModifyFlightDetails()
                         {
                             // help to double check this please fiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjw
                             // checks if the gate does supports the special request
-                            if ((terminal.BoardingGates[newBoardingGate].SupportsCFFT = false) && (flight1 is CFFTFlight))
+                            if ((terminal.BoardingGates[newBoardingGate].SupportsCFFT == false) && (flight1 is CFFTFlight))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code CFFT. Please choose another Boarding Gate.");
+                                continue;
                             }
-                            else if ((terminal.BoardingGates[newBoardingGate].SupportsDDJB = false) && (flight1 is DDJBFlight))
+                            else if ((terminal.BoardingGates[newBoardingGate].SupportsDDJB == false) && (flight1 is DDJBFlight))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code DDJB. Please choose another Boarding Gate.");
+                                continue;
                             }
-                            else if ((terminal.BoardingGates[newBoardingGate].SupportsLWTT = false) && (flight1 is LWTTFlight))
+                            else if ((terminal.BoardingGates[newBoardingGate].SupportsLWTT == false) && (flight1 is LWTTFlight))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code LWTT. Please choose another Boarding Gate.");
+                                continue;
                             }
                             else
                             {
-                                terminal.BoardingGates[newBoardingGate].Flight = terminal.Flights[flight1.FlightNumber];
-                                break;
-                            }
-                            // removes the boarding gate currently assigned to the flight
-                            foreach (BoardingGate gate in terminal.BoardingGates.Values)
-                            {
-                                if (gate.Flight == flight1)
+                                // removes the boarding gate currently assigned to the flight
+                                foreach (BoardingGate gate in terminal.BoardingGates.Values)
                                 {
-                                    gate.Flight = null;
-                                    break;
+                                    if (gate.Flight == flight1)
+                                    {
+                                        gate.Flight = null;
+                                        break;
+                                    }
                                 }
+                                terminal.BoardingGates[newBoardingGate].Flight = terminal.Flights[flight1.FlightNumber];
                             }
+
                         }
                         // checks if the boarding gate is already assigned to another flight
                         else if ((terminal.BoardingGates[newBoardingGate] != null) && (terminal.BoardingGates[newBoardingGate].Flight.FlightNumber != flight1.FlightNumber))
                         {
                             Console.WriteLine($"Boarding Gate {newBoardingGate} is already assigned to Flight {terminal.BoardingGates[newBoardingGate].Flight.FlightNumber}. Please choose another Boarding Gate.\n");
+                            continue;
                         }
 
                         else
