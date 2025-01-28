@@ -279,17 +279,28 @@ void BoardGateAssignment()
                     if ((terminal.BoardingGates[boardingGateNumber].SupportsCFFT = false) && (terminal.Flights[flightNumber] is CFFTFlight))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code CFFT. Please choose another Boarding Gate.");
+                        continue;
                     }
                     else if ((terminal.BoardingGates[boardingGateNumber].SupportsDDJB = false) && (terminal.Flights[flightNumber] is DDJBFlight))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code DDJB. Please choose another Boarding Gate.");
+                        continue;
                     }
                     else if ((terminal.BoardingGates[boardingGateNumber].SupportsLWTT = false) && (terminal.Flights[flightNumber] is LWTTFlight))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code LWTT. Please choose another Boarding Gate.");
+                        continue;
                     }
                     else
                     {
+                        foreach (BoardingGate gate in terminal.BoardingGates.Values)
+                        {
+                            if (gate.Flight.FlightNumber == flightNumber)
+                            {
+                                gate.Flight = null;
+                                break;
+                            }
+                        }
                         terminal.BoardingGates[boardingGateNumber].Flight = terminal.Flights[flightNumber];
                         break;
                     }
