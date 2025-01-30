@@ -957,6 +957,98 @@ void DisplayFlightSchedule()
     }
 }
 
+// a) Process all unassigned flights to boarding gates in bulk
+void ProcessUnassignedFlights()
+{
+    Queue<Flight> flights = new Queue<Flight>();
+    List<BoardingGate> boardingGate = new List<BoardingGate>();
+
+    int numberOfFlights1 = 0;
+    bool foundflight = false;
+    foreach (Flight flight in terminal.Flights.Values)
+    {
+        foreach (BoardingGate gate in terminal.BoardingGates.Values)
+        {
+            if (flight == gate.Flight)
+            {
+                foundflight = true;
+                numberOfFlights1++;
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        if (foundflight == false)
+        {
+            flights.Enqueue(flight);
+        }
+    }
+    int numberOfFlights = flights.Count;
+    Console.WriteLine($"Total number of Flights that do not have any Boarding Gate assigned yet: {numberOfFlights}");
+
+    int numberOfBoardingGate1 = 0;
+    foreach (BoardingGate gate in terminal.BoardingGates.Values)
+    {
+        if (gate.Flight == null)
+        {
+            boardingGate.Add(gate);
+        }
+        else
+        {
+            numberOfBoardingGate1++;
+            continue;
+        }
+    }
+    int numberOfBoardingGate = boardingGate.Count;
+    Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {numberOfBoardingGate}");
+
+    int total = 0;
+    foreach (Flight f in flights)
+    {
+        if (f is LWTTFlight)
+        {
+            foreach (BoardingGate gate in boardingGate)
+            {
+                if (gate.SupportsLWTT == true)
+                {
+                    gate.Flight = f;
+                    total++;
+                    boardingGate.Remove(gate);
+                }
+            }
+        }
+        else if (f is CFFTFlight)
+        {
+            foreach (BoardingGate gate in boardingGate)
+            {
+                if (gate.SupportsCFFT == true)
+                {
+                    gate.Flight = f;
+                    total++;
+                    boardingGate.Remove(gate);
+                }
+            }
+        }
+        else if (f is DDJBFlight)
+        {
+            foreach (BoardingGate gate in boardingGate)
+            {
+                if (gate.SupportsDDJB == true)
+                {
+                    gate.Flight = f;
+                    total++;
+                    boardingGate.Remove(gate);
+                }
+            }
+        }
+        flights.Dequeue();
+    }
+
+    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights1 + numberOfBoardingGate1)) / 100}%)");
+}
+
 
 // Bonus task b) Display the total fee per airline for the day
 void AirLineFee()
