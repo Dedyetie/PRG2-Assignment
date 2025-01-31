@@ -84,7 +84,7 @@ using (StreamReader sr = new StreamReader("flights.csv"))
 
 Console.WriteLine("");
 Console.WriteLine("");
-
+ProcessUnassignedFlights();
 // Main Program
 while (true)
 {
@@ -964,12 +964,13 @@ void ProcessUnassignedFlights()
     List<BoardingGate> boardingGate = new List<BoardingGate>();
 
     int numberOfFlights1 = 0;
-    bool foundflight = false;
-    foreach (Flight flight in terminal.Flights.Values)
+    // if the gate has no flight assigned, it is queued
+    foreach (Flight f in terminal.Flights.Values)
     {
+        bool foundflight = false;
         foreach (BoardingGate gate in terminal.BoardingGates.Values)
         {
-            if (flight == gate.Flight)
+            if (f == gate.Flight)
             {
                 foundflight = true;
                 numberOfFlights1++;
@@ -982,7 +983,7 @@ void ProcessUnassignedFlights()
         }
         if (foundflight == false)
         {
-            flights.Enqueue(flight);
+            flights.Enqueue(f);
         }
     }
     int numberOfFlights = flights.Count;
@@ -998,55 +999,114 @@ void ProcessUnassignedFlights()
         else
         {
             numberOfBoardingGate1++;
-            continue;
         }
     }
     int numberOfBoardingGate = boardingGate.Count;
     Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {numberOfBoardingGate}");
 
-    int total = 0;
-    foreach (Flight f in flights)
-    {
-        if (f is LWTTFlight)
-        {
-            foreach (BoardingGate gate in boardingGate)
-            {
-                if (gate.SupportsLWTT == true)
-                {
-                    gate.Flight = f;
-                    total++;
-                    boardingGate.Remove(gate);
-                }
-            }
-        }
-        else if (f is CFFTFlight)
-        {
-            foreach (BoardingGate gate in boardingGate)
-            {
-                if (gate.SupportsCFFT == true)
-                {
-                    gate.Flight = f;
-                    total++;
-                    boardingGate.Remove(gate);
-                }
-            }
-        }
-        else if (f is DDJBFlight)
-        {
-            foreach (BoardingGate gate in boardingGate)
-            {
-                if (gate.SupportsDDJB == true)
-                {
-                    gate.Flight = f;
-                    total++;
-                    boardingGate.Remove(gate);
-                }
-            }
-        }
-        flights.Dequeue();
-    }
 
-    Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights1 + numberOfBoardingGate1)) / 100}%)");
+
+
+
+    int total = 0;
+
+    while (flights.Count > 0 && boardingGate.Count > 0)
+    {
+        Flight f = flights.Dequeue();
+        BoardingGate gateToRemove = null;
+        foreach (BoardingGate gate in boardingGate)
+        {
+            if ((f is CFFTFlight) && (gate.SupportsCFFT))
+            {
+                gate.Flight = f;
+                total++;
+                gateToRemove = gate;
+                break;
+            }
+            else if ((f is DDJBFlight) && (gate.SupportsDDJB))
+            {
+                gate.Flight = f;
+                total++;
+                gateToRemove = gate;
+                break;
+            }
+            else if ((f is LWTTFlight) && (gate.SupportsLWTT))
+            {
+                gate.Flight = f;
+                total++;
+                gateToRemove = gate;
+                break;
+            }
+            else
+            {
+                gate.Flight = f;
+                total++;
+                gateToRemove = gate;
+                break;
+            }
+        }
+
+        if (gateToRemove != null)
+        {
+            boardingGate.Remove(gateToRemove);
+        }
+    }
+    //    foreach (Flight f in flights)
+    //{
+    //    if (f is LWTTFlight)
+    //    {
+    //        foreach (BoardingGate gate in boardingGate)
+    //        {
+    //            if (gate.SupportsLWTT == true)
+    //            {
+    //                gate.Flight = f;
+    //                total++;
+    //                gateToRemove = gate;
+    //            }
+    //        }
+    //        boardingGate.Remove(gateToRemove);
+    //        break;
+    //    }
+    //    else if (f is CFFTFlight)
+    //    {
+    //        foreach (BoardingGate gate in boardingGate)
+    //        {
+    //            if (gate.SupportsCFFT == true)
+    //            {
+    //                gate.Flight = f;
+    //                total++;
+    //                gateToRemove = gate;
+    //            }
+    //        }
+    //        boardingGate.Remove(gateToRemove);
+    //        break;
+    //    }
+    //    else if (f is DDJBFlight)
+    //    {
+    //        foreach (BoardingGate gate in boardingGate)
+    //        {
+    //            if (gate.SupportsDDJB == true)
+    //            {
+    //                gate.Flight = f;
+    //                total++;
+    //                gateToRemove = gate;
+    //            }
+    //        }
+    //        boardingGate.Remove(gateToRemove);
+    //        break;
+    //    }
+    //    else
+    //    {
+    //        boardingGate[0].Flight = f;
+    //        total++;
+    //        boardingGate.RemoveAt(0);
+    //        break;
+    //    }
+    //}
+
+
+
+    //Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights1 + numberOfBoardingGate1)) / 100}%)");
 }
 
 
