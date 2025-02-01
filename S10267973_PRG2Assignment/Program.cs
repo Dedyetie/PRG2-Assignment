@@ -239,12 +239,13 @@ void BoardGateAssignment()
             }
             else
             {
-                throw new Exception();
+                Console.WriteLine("Invalid Flight Number. Please try another number.");
+                continue;
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine("Invalid input or flight details. Please try again.");
+            Console.WriteLine("Invalid input. Please try again.");
         }
     }
 
@@ -283,7 +284,7 @@ void BoardGateAssignment()
             boardingGateNumber = Console.ReadLine().ToUpper();
             if (terminal.BoardingGates.ContainsKey(boardingGateNumber))
             {
-                // checks if the boarding gate is not assigned to any flight OR if it is assigned to its ownself
+                // checks if the boarding gate is not assigned to any flight
                 if ((terminal.BoardingGates[boardingGateNumber].Flight == null))
                 {
                     // checks if the gate does supports the special request
@@ -318,7 +319,8 @@ void BoardGateAssignment()
             }
             else
             {
-                throw new Exception();
+                Console.WriteLine($"{boardingGateNumber} is not a valid Boarding Gate Number. Please try again.");
+                continue;
             }
         }
         catch (Exception e)
@@ -408,7 +410,6 @@ void CreateFlight()
                 Console.WriteLine();
                 continue;
             }
-            
 
             Console.WriteLine("Enter Flight Origin: ");
             origin = Console.ReadLine();
@@ -440,6 +441,10 @@ void CreateFlight()
                 terminal.Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
                 terminal.Airlines[flightNumber.Substring(0, 2)].Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
+            else
+            {
+                throw new Exception();
+            }
             Console.WriteLine($"Flight {flightNumber} has been added!");
 
             Console.WriteLine("Would You Like To Add Another Flight? (Y/N)");
@@ -457,7 +462,7 @@ void CreateFlight()
                 throw new Exception();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Console.WriteLine("Invalid input. Please try again.");
             Console.WriteLine();
@@ -686,25 +691,6 @@ void ModifyFlightDetails()
         }
         else if (opt2 == 2)
         {
-            //feel free to change it back idk how she wants it to be but based on one of my earlier tasks they asked it dis way sooooooooo now to get the attemtion fiwnifhwu9gfhwigfbuiwehgowebnjigwigbhiwgjiwnjgwjgbnjiwrngfjiwbngjiwngjijnggjnwkfewnjifnewjofnewjfnewjofowebwrigbifnjiwenfjiewnjifnewjifbniwefbwifbweifbiewbfhebhfjebhefwbfweijbnfjiewfjghrighrhghhirghiwrhgihighwrighijwrghjiewgjijwhigbhiwgbhiewbfhibewrhfbewhjifnjiwefnjiewebjiewbngjibheibnijefbjiwebfwhuinecgrhuiorethunioecsgtrnhuoecgrhunioecwtnhuiocewtnihuecwthuniecwgrhuincetwhuicrewghuirecwg
-
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        Console.Write("Enter new Status:");
-            //        newStatus = Console.ReadLine();
-            //        flight1.Status = newStatus;
-
-            //        Console.WriteLine("Flight updated!");
-            //        break;
-            //    }
-            //    catch (Exception)
-            //    {
-            //        Console.WriteLine("Invalid input. Please try again.");
-            //        continue;
-            //    }
-            //}
             while (true)
             {
                 try
@@ -803,57 +789,42 @@ void ModifyFlightDetails()
                     if (terminal.BoardingGates.ContainsKey(newBoardingGate))
                     {
                         // checks if the boarding gate is not assigned to any flight
-                        if (terminal.BoardingGates[newBoardingGate].Flight == null)
+                        if ((terminal.BoardingGates[newBoardingGate].Flight == null))
                         {
-                            // help to double check this please fiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjw
                             // checks if the gate does supports the special request
-                            if ((terminal.BoardingGates[newBoardingGate].SupportsCFFT == false) && (flight1 is CFFTFlight))
+                            if ((terminal.Flights[fNo] is CFFTFlight) && (terminal.BoardingGates[newBoardingGate].SupportsCFFT == false))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code CFFT. Please choose another Boarding Gate.");
                                 continue;
                             }
-                            else if ((terminal.BoardingGates[newBoardingGate].SupportsDDJB == false) && (flight1 is DDJBFlight))
+                            else if ((terminal.Flights[fNo] is DDJBFlight) && (terminal.BoardingGates[newBoardingGate].SupportsDDJB == false))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code DDJB. Please choose another Boarding Gate.");
                                 continue;
                             }
-                            else if ((terminal.BoardingGates[newBoardingGate].SupportsLWTT == false) && (flight1 is LWTTFlight))
+                            else if ((terminal.Flights[fNo] is LWTTFlight) && (terminal.BoardingGates[newBoardingGate].SupportsLWTT == false))
                             {
                                 Console.WriteLine($"The Gate {newBoardingGate} does not support Special Request Code LWTT. Please choose another Boarding Gate.");
                                 continue;
                             }
+                            // if theres no issue, it the flight is assigned
                             else
                             {
-                                // removes the boarding gate currently assigned to the flight
-                                foreach (BoardingGate gate in terminal.BoardingGates.Values)
-                                {
-                                    if (gate.Flight == flight1)
-                                    {
-                                        gate.Flight = null;
-                                        break;
-                                    }
-                                }
-                                terminal.BoardingGates[newBoardingGate].Flight = terminal.Flights[flight1.FlightNumber];
+                                terminal.BoardingGates[newBoardingGate].Flight = terminal.Flights[fNo];
+                                break;
                             }
-
                         }
                         // checks if the boarding gate is already assigned to another flight
-                        else if ((terminal.BoardingGates[newBoardingGate] != null) && (terminal.BoardingGates[newBoardingGate].Flight.FlightNumber != flight1.FlightNumber))
+                        else 
                         {
                             Console.WriteLine($"Boarding Gate {newBoardingGate} is already assigned to Flight {terminal.BoardingGates[newBoardingGate].Flight.FlightNumber}. Please choose another Boarding Gate.\n");
                             continue;
                         }
-
-                        else
-                        {
-                            throw new Exception();
-                        }
-                        Console.WriteLine("Flight updated!");
-                        break;
                     }
                     else
                     {
-                        throw new Exception();
+                        Console.WriteLine($"{newBoardingGate} is not a valid Boarding Gate Number. Please try again.");
+                        continue;
                     }
                 }
                 catch (Exception)
@@ -911,7 +882,9 @@ void ModifyFlightDetails()
                 opt2 = Console.ReadLine().ToLower();
                 if (opt2 == "y")
                 {
+                    airline1.RemoveFlight(terminal.Flights[fNo]);
                     terminal.Flights.Remove(fNo);
+                    terminal.Airlines.Remove(fNo);
                     Console.WriteLine($"Flight {fNo} was successfully deleted.");
                     break;
                 }
@@ -1065,10 +1038,16 @@ void ProcessUnassignedFlights()
             boardingGate.Remove(gateToRemove);
         }
     }
-
     try
     {
-        Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / Convert.ToDouble(numberOfFlights + numberOfBoardingGate)) * 100:F2}%)");
+        if (numberOfFlights != 0 && numberOfBoardingGate != 0)
+        {
+            Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / Convert.ToDouble(numberOfFlights + numberOfBoardingGate)) * 100:F2}%)");
+        }
+        else
+        {
+            throw new DivideByZeroException();
+        }
     }
     catch (DivideByZeroException)
     {
@@ -1108,64 +1087,6 @@ void AirLineFee()
 
     else
     {
-        double baseTotal = 0;
-        double discounts = 0;
-        double finalTotal = 0;
-
-        Console.WriteLine("=============================================");
-        Console.WriteLine("Fees For Each Airline");
-        Console.WriteLine("=============================================\n");
-
-        Console.WriteLine($"{"Airline",-21}{"Original Subtotal ($)",-23}{"Total Discount ($)",-20}{"Final Fee ($)"}");
-
-        foreach (Airline airline in terminal.Airlines.Values)
-        {
-            double nineToEleven = 0;
-            double dubaiBangkokTokyo = 0;
-            double noSpecialRequest = 0;
-            double percentageDiscount = 1;
-
-            double baseFee = airline.CalculateFees();
-            double flightx3 = Math.Floor(Convert.ToDouble(airline.Flights.Count / 3)) * 350;
-
-            foreach (Flight flight in airline.Flights.Values)
-            {
-                if (flight.ExpectedTime.TimeOfDay >= new TimeSpan(21, 0, 0) || flight.ExpectedTime.TimeOfDay < new TimeSpan(11, 0, 0))
-                {
-                    nineToEleven += 110;
-                }
-                if ((flight.Origin == "Dubai (DXB)") || (flight.Origin == "Bangkok (BKK)") || (flight.Origin == "Tokyo (NRT)"))
-                {
-                    dubaiBangkokTokyo += 25;
-                }
-                if (flight is NORMFlight)
-                {
-                    noSpecialRequest += 50;
-                }
-            }
-
-            if (airline.Flights.Count > 5)
-            {
-                percentageDiscount = 0.97;
-            }
-
-            double netFee = (baseFee * percentageDiscount) + flightx3 + nineToEleven + dubaiBangkokTokyo + noSpecialRequest;
-
-            baseTotal += baseFee;
-            discounts += flightx3 + nineToEleven + dubaiBangkokTokyo + noSpecialRequest;
-            finalTotal += netFee;
-
-            Console.WriteLine($"{airline.Name,-21}{baseFee,-23:F2}{(netFee - baseFee),-20:F2}{netFee:F2}");
-        }
-
-        Console.WriteLine("\n=============================================");
-        Console.WriteLine("Totals For All Airlines");
-        Console.WriteLine("=============================================\n");
-
-        Console.WriteLine($"Subtotal of all Airline fees: ${baseTotal:F2}");
-        Console.WriteLine($"Subtotal of all Airline discounts to be Deducted: ${discounts:F2}");
-        Console.WriteLine($"Airline fees to be collected: ${finalTotal:F2}");
-        Console.WriteLine($"Percentage of discounts over Subtotal of all Airline fees: {(discounts / baseTotal * 100):F2}%");
+        terminal.PrintAirlineFees();
     }
 }
-
