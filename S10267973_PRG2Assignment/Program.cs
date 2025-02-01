@@ -500,7 +500,7 @@ void DisplayAirlineFlights()
                 throw new Exception();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Console.WriteLine("Invalid input. Please try again.");
             continue;
@@ -581,6 +581,7 @@ void ModifyFlightDetails()
             Console.WriteLine("Choose an existing Flight to modify or delete:");
             fNo = Console.ReadLine().ToUpper();
 
+            // Checks if Flight Number exists
             if (airline1.Flights.ContainsKey(fNo) == true)
             {
                 flight1 = airline1.Flights[fNo];
@@ -642,7 +643,7 @@ void ModifyFlightDetails()
                 Console.WriteLine("Choose an option:");
                 opt2 = Convert.ToInt32(Console.ReadLine());
 
-                if (1 >= opt2 || 4 >= opt2)
+                if (1 <= opt2 || 4 >= opt2)
                 {
                     break;
                 }
@@ -885,6 +886,8 @@ void ModifyFlightDetails()
                     airline1.RemoveFlight(terminal.Flights[fNo]);
                     terminal.Flights.Remove(fNo);
                     terminal.Airlines.Remove(fNo);
+                    Airline airline = terminal.GetAirlineFromFlight(flight1);
+                    airline.RemoveFlight(flight1);
                     Console.WriteLine($"Flight {fNo} was successfully deleted.");
                     break;
                 }
@@ -956,7 +959,7 @@ void ProcessUnassignedFlights()
     Queue<Flight> flights = new Queue<Flight>();
     List<BoardingGate> boardingGate = new List<BoardingGate>();
 
-    int numberOfFlights = 0;
+    int numberOfFlights = 0; //To house num of flights assigned manually
     // if the gate has no flight assigned, it is queued
     foreach (Flight f in terminal.Flights.Values)
     {
@@ -981,7 +984,7 @@ void ProcessUnassignedFlights()
     }
     Console.WriteLine($"Total number of Flights that do not have any Boarding Gate assigned yet: {flights.Count}");
 
-    int numberOfBoardingGate = 0;
+    int numberOfBoardingGate = 0; //To house num of gates assigned manually
     foreach (BoardingGate gate in terminal.BoardingGates.Values)
     {
         if (gate.Flight == null)
@@ -995,7 +998,7 @@ void ProcessUnassignedFlights()
     }
     Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {boardingGate.Count}");
 
-    int total = 0;
+    int total = 0; //To house total assigned automatically
 
     while (flights.Count > 0 && boardingGate.Count > 0)
     {
@@ -1049,7 +1052,7 @@ void ProcessUnassignedFlights()
             throw new DivideByZeroException();
         }
     }
-    catch (DivideByZeroException)
+    catch (DivideByZeroException) //If no flights were assigned manually
     {
         Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2}");
         Console.WriteLine("All flights were processed automatically.");
