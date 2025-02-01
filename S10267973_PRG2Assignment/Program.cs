@@ -286,23 +286,23 @@ void BoardGateAssignment()
                 // checks if the boarding gate is not assigned to any flight OR if it is assigned to its ownself
                 if ((terminal.BoardingGates[boardingGateNumber].Flight == null))
                 {
-                    // help to double check this please fiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjw
                     // checks if the gate does supports the special request
-                    if ((terminal.BoardingGates[boardingGateNumber].SupportsCFFT = false) && (terminal.Flights[flightNumber] is CFFTFlight))
+                    if ((terminal.Flights[flightNumber] is CFFTFlight) && (terminal.BoardingGates[boardingGateNumber].SupportsCFFT == false))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code CFFT. Please choose another Boarding Gate.");
                         continue;
                     }
-                    else if ((terminal.BoardingGates[boardingGateNumber].SupportsDDJB = false) && (terminal.Flights[flightNumber] is DDJBFlight))
+                    else if ((terminal.Flights[flightNumber] is DDJBFlight) && (terminal.BoardingGates[boardingGateNumber].SupportsDDJB == false))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code DDJB. Please choose another Boarding Gate.");
                         continue;
                     }
-                    else if ((terminal.BoardingGates[boardingGateNumber].SupportsLWTT = false) && (terminal.Flights[flightNumber] is LWTTFlight))
+                    else if ((terminal.Flights[flightNumber] is LWTTFlight) && (terminal.BoardingGates[boardingGateNumber].SupportsLWTT == false))
                     {
                         Console.WriteLine($"The Gate {boardingGateNumber} does not support Special Request Code LWTT. Please choose another Boarding Gate.");
                         continue;
                     }
+                    // if theres no issue, it the flight is assigned
                     else
                     {
                         terminal.BoardingGates[boardingGateNumber].Flight = terminal.Flights[flightNumber];
@@ -310,9 +310,10 @@ void BoardGateAssignment()
                     }
                 }
                 // checks if the boarding gate is already assigned to another flight
-                else if ((terminal.BoardingGates[boardingGateNumber] != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber != flightNumber) || (terminal.BoardingGates[boardingGateNumber].Flight != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber == flightNumber))
+                else if (terminal.BoardingGates[boardingGateNumber] != null)
                 {
                     Console.WriteLine($"Boarding Gate {boardingGateNumber} is already assigned to Flight {terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber}. Please choose another Boarding Gate.\n");
+                    continue;
                 }
             }
             else
@@ -399,6 +400,16 @@ void CreateFlight()
         {
             Console.WriteLine("Enter Flight Number: ");
             flightNumber = Console.ReadLine().ToUpper();
+
+            // checks if the first 2 letters is an airline code
+            if (!terminal.Airlines.ContainsKey(flightNumber.Substring(0,2)))
+            {
+                Console.WriteLine($"{flightNumber.Substring(0, 2)} is not a valid Airline code.");
+                Console.WriteLine();
+                continue;
+            }
+            
+
             Console.WriteLine("Enter Flight Origin: ");
             origin = Console.ReadLine();
             Console.WriteLine("Enter Flight Destination: ");
@@ -411,19 +422,23 @@ void CreateFlight()
             if (requestCode == "CFFT")
             {
                 terminal.Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Airlines[flightNumber.Substring(0, 2)].Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
 
             }
             else if (requestCode == "DDJB")
             {
                 terminal.Flights.Add(flightNumber, new DDJBFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Airlines[flightNumber.Substring(0, 2)].Flights.Add(flightNumber, new DDJBFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
             else if (requestCode == "LWTT")
             {
                 terminal.Flights.Add(flightNumber, new LWTTFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Airlines[flightNumber.Substring(0, 2)].Flights.Add(flightNumber, new LWTTFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
             else if (requestCode == "NONE")
             {
-            terminal.Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
+                terminal.Airlines[flightNumber.Substring(0, 2)].Flights.Add(flightNumber, new NORMFlight(flightNumber, origin, destination, expectedTime, "On time"));
             }
             Console.WriteLine($"Flight {flightNumber} has been added!");
 
@@ -445,6 +460,7 @@ void CreateFlight()
         catch (Exception ex)
         {
             Console.WriteLine("Invalid input. Please try again.");
+            Console.WriteLine();
         }
     }
 }
@@ -1049,62 +1065,10 @@ void ProcessUnassignedFlights()
             boardingGate.Remove(gateToRemove);
         }
     }
-    //    foreach (Flight f in flights)
-    //{
-    //    if (f is LWTTFlight)
-    //    {
-    //        foreach (BoardingGate gate in boardingGate)
-    //        {
-    //            if (gate.SupportsLWTT == true)
-    //            {
-    //                gate.Flight = f;
-    //                total++;
-    //                gateToRemove = gate;
-    //            }
-    //        }
-    //        boardingGate.Remove(gateToRemove);
-    //        break;
-    //    }
-    //    else if (f is CFFTFlight)
-    //    {
-    //        foreach (BoardingGate gate in boardingGate)
-    //        {
-    //            if (gate.SupportsCFFT == true)
-    //            {
-    //                gate.Flight = f;
-    //                total++;
-    //                gateToRemove = gate;
-    //            }
-    //        }
-    //        boardingGate.Remove(gateToRemove);
-    //        break;
-    //    }
-    //    else if (f is DDJBFlight)
-    //    {
-    //        foreach (BoardingGate gate in boardingGate)
-    //        {
-    //            if (gate.SupportsDDJB == true)
-    //            {
-    //                gate.Flight = f;
-    //                total++;
-    //                gateToRemove = gate;
-    //            }
-    //        }
-    //        boardingGate.Remove(gateToRemove);
-    //        break;
-    //    }
-    //    else
-    //    {
-    //        boardingGate[0].Flight = f;
-    //        total++;
-    //        boardingGate.RemoveAt(0);
-    //        break;
-    //    }
-    //}
 
     try
     {
-        Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights + numberOfBoardingGate)) / 100:F2}%)");
+        Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / Convert.ToDouble(numberOfFlights + numberOfBoardingGate)) * 100:F2}%)");
     }
     catch (DivideByZeroException)
     {
