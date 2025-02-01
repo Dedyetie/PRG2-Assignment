@@ -84,7 +84,7 @@ using (StreamReader sr = new StreamReader("flights.csv"))
 
 Console.WriteLine("");
 Console.WriteLine("");
-ProcessUnassignedFlights();
+
 // Main Program
 while (true)
 {
@@ -131,6 +131,16 @@ while (true)
         DisplayFlightSchedule();
         Console.WriteLine("");
     }
+    else if (opt == 8)
+    {
+        ProcessUnassignedFlights();
+        Console.WriteLine("");
+    }
+    else if (opt == 9)
+    {
+        AirLineFee();
+        Console.WriteLine("");
+    }
     else
     {
         Console.WriteLine("Invalid option! Please try again.");
@@ -155,6 +165,8 @@ int Menu()
         Console.WriteLine("5. Display Airline Flights");
         Console.WriteLine("6. Modify Flight Details");
         Console.WriteLine("7. Display Flight Schedule");
+        Console.WriteLine("8. Process all Unassigned Flights");
+        Console.WriteLine("9. Display the Total Fee Per Airline for the Day");
         Console.WriteLine("0. Exit");
         Console.WriteLine("");
         Console.WriteLine("Please select your option:");
@@ -272,7 +284,7 @@ void BoardGateAssignment()
             if (terminal.BoardingGates.ContainsKey(boardingGateNumber))
             {
                 // checks if the boarding gate is not assigned to any flight OR if it is assigned to its ownself
-                if ((terminal.BoardingGates[boardingGateNumber].Flight == null) || (terminal.BoardingGates[boardingGateNumber].Flight != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber == flightNumber))
+                if ((terminal.BoardingGates[boardingGateNumber].Flight == null))
                 {
                     // help to double check this please fiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjwfiwefnuiwebfuiwnfbwenifbnewuifbiefbweijefjw
                     // checks if the gate does supports the special request
@@ -293,20 +305,12 @@ void BoardGateAssignment()
                     }
                     else
                     {
-                        foreach (BoardingGate gate in terminal.BoardingGates.Values)
-                        {
-                            if (gate.Flight.FlightNumber == flightNumber)
-                            {
-                                gate.Flight = null;
-                                break;
-                            }
-                        }
                         terminal.BoardingGates[boardingGateNumber].Flight = terminal.Flights[flightNumber];
                         break;
                     }
                 }
                 // checks if the boarding gate is already assigned to another flight
-                else if ((terminal.BoardingGates[boardingGateNumber] != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber != flightNumber))
+                else if ((terminal.BoardingGates[boardingGateNumber] != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber != flightNumber) || (terminal.BoardingGates[boardingGateNumber].Flight != null) && (terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber == flightNumber))
                 {
                     Console.WriteLine($"Boarding Gate {boardingGateNumber} is already assigned to Flight {terminal.BoardingGates[boardingGateNumber].Flight.FlightNumber}. Please choose another Boarding Gate.\n");
                 }
@@ -399,7 +403,7 @@ void CreateFlight()
             origin = Console.ReadLine();
             Console.WriteLine("Enter Flight Destination: ");
             destination = Console.ReadLine();
-            Console.WriteLine("Enter Flight Expected Departure/Arrival Time: ");
+            Console.WriteLine("Enter Flight Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
             expectedTime = Convert.ToDateTime(Console.ReadLine());
 
             Console.WriteLine("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
@@ -957,13 +961,13 @@ void DisplayFlightSchedule()
     }
 }
 
-// a) Process all unassigned flights to boarding gates in bulk
+// Bonus task a) Process all unassigned flights to boarding gates in bulk
 void ProcessUnassignedFlights()
 {
     Queue<Flight> flights = new Queue<Flight>();
     List<BoardingGate> boardingGate = new List<BoardingGate>();
 
-    int numberOfFlights1 = 0;
+    int numberOfFlights = 0;
     // if the gate has no flight assigned, it is queued
     foreach (Flight f in terminal.Flights.Values)
     {
@@ -973,7 +977,7 @@ void ProcessUnassignedFlights()
             if (f == gate.Flight)
             {
                 foundflight = true;
-                numberOfFlights1++;
+                numberOfFlights++;
                 break;
             }
             else
@@ -986,10 +990,9 @@ void ProcessUnassignedFlights()
             flights.Enqueue(f);
         }
     }
-    int numberOfFlights = flights.Count;
-    Console.WriteLine($"Total number of Flights that do not have any Boarding Gate assigned yet: {numberOfFlights}");
+    Console.WriteLine($"Total number of Flights that do not have any Boarding Gate assigned yet: {flights.Count}");
 
-    int numberOfBoardingGate1 = 0;
+    int numberOfBoardingGate = 0;
     foreach (BoardingGate gate in terminal.BoardingGates.Values)
     {
         if (gate.Flight == null)
@@ -998,15 +1001,10 @@ void ProcessUnassignedFlights()
         }
         else
         {
-            numberOfBoardingGate1++;
+            numberOfBoardingGate++;
         }
     }
-    int numberOfBoardingGate = boardingGate.Count;
-    Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {numberOfBoardingGate}");
-
-
-
-
+    Console.WriteLine($"Total number of Boarding Gates that do not have a Flight Number assigned yet: {boardingGate.Count}");
 
     int total = 0;
 
@@ -1104,10 +1102,17 @@ void ProcessUnassignedFlights()
     //    }
     //}
 
-
-
-    //Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights1 + numberOfBoardingGate1)) / 100}%)");
+    try
+    {
+        Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2} ({((total * 2) / (numberOfFlights + numberOfBoardingGate)) / 100:F2}%)");
+    }
+    catch (DivideByZeroException)
+    {
+        Console.WriteLine($"Total number of Flights and Boarding Gates processed and assigned: {total * 2}");
+        Console.WriteLine("All flights were processed automatically.");
+    }
 }
+
 
 
 // Bonus task b) Display the total fee per airline for the day
@@ -1128,7 +1133,7 @@ void AirLineFee()
         }
     }
 
-    if (flights != null)
+    if (flights.Count > 0)
     {
         Console.WriteLine("Please ensure that these Flights are assigned a Boarding Gate before running this feature again:");
         foreach (Flight flight in flights)
