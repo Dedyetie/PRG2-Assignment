@@ -239,7 +239,7 @@ void BoardGateAssignment()
             }
             else
             {
-                Console.WriteLine("Invalid Flight Number. Please try another number.");
+                Console.WriteLine($"{flightNumber} does not exist. Please try another number.");
                 continue;
             }
         }
@@ -323,7 +323,7 @@ void BoardGateAssignment()
                 continue;
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Console.WriteLine("Invalid input or gate details. Please try again.");
         }
@@ -410,6 +410,12 @@ void CreateFlight()
                 Console.WriteLine();
                 continue;
             }
+            // checks if the flight number already exists
+            if (terminal.Flights.ContainsKey(flightNumber))
+            {
+                Console.WriteLine($"{flightNumber} already exists. Please choose another Flight Number.\n");
+                continue;
+            }
 
             Console.WriteLine("Enter Flight Origin: ");
             origin = Console.ReadLine();
@@ -420,6 +426,7 @@ void CreateFlight()
 
             Console.WriteLine("Enter Special Request Code (CFFT/DDJB/LWTT/None): ");
             string requestCode = Console.ReadLine().ToUpper();
+            // creates the correct flight subclass depending on the special request code
             if (requestCode == "CFFT")
             {
                 terminal.Flights.Add(flightNumber, new CFFTFlight(flightNumber, origin, destination, expectedTime, "On time"));
@@ -909,7 +916,7 @@ void ModifyFlightDetails()
 void DisplayFlightSchedule()
 {
     List<Flight> flightList = new List<Flight>();
-    // adds all flights to a list to sort them out
+    // adds all flights to a list to sort them out, based on the icomparable
     foreach (KeyValuePair<string, Flight> kvp in terminal.Flights)
     {
         flightList.Add(kvp.Value);
@@ -922,6 +929,7 @@ void DisplayFlightSchedule()
         string boardingGate = "Unassigned";
         string specialRequest = "None";
         
+        //checks if the gate is assigned and that the flight number is the one assigned to the gate
         foreach (BoardingGate Gate in terminal.BoardingGates.Values)
         {
             if ((Gate.Flight != null) && (Gate.Flight.FlightNumber == flight.FlightNumber))
@@ -930,6 +938,7 @@ void DisplayFlightSchedule()
             }
         }
 
+        // checks the flight for any special request code
         if (flight is CFFTFlight)
         {
             specialRequest = "CFFT";
@@ -1070,7 +1079,7 @@ void AirLineFee()
         flights.Add(flight);
     }
 
-    // Checks if each flight has been assigned a boarding gate
+    // Checks if each flight has been assigned a boarding gate, and if so it removes the flight from the list
     foreach (BoardingGate gate in terminal.BoardingGates.Values)
     {
         if (flights.Contains(gate.Flight))
@@ -1079,9 +1088,10 @@ void AirLineFee()
         }
     }
 
+    // checks if theres any flights remaining in the list (flights that are unassigned to a boarding gate)
     if (flights.Count > 0)
     {
-        Console.WriteLine("Please ensure that these Flights are assigned a Boarding Gate before running this feature again:");
+        Console.WriteLine("Please ensure that these Flight(s) are assigned a Boarding Gate before running this feature again:");
         foreach (Flight flight in flights)
         {
             Console.WriteLine(flight.FlightNumber);
