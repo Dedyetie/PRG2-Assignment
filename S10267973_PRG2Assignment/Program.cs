@@ -1,4 +1,10 @@
-﻿using S10267973_PRG2Assignment;
+﻿//==========================================================
+// Student Number: S10267973, S10268020
+// Student Name	 : Eng Zhe Xuan, Gerel & Ong Jun Shu, Camellia
+//==========================================================
+
+
+using S10267973_PRG2Assignment;
 using System.Linq.Expressions;
 
 Terminal terminal = new Terminal("Terminal 5");
